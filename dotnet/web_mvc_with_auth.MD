@@ -43,7 +43,7 @@ dotnet tool install dotnet-aspnet-codegenerator
 - Add packages for Postgres
 ```
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 6.0.1
-dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 2.0.0-preview1
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 1.1.0
 ```
 
 - Add package for Code Generation
