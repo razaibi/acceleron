@@ -1,7 +1,6 @@
-Get a basic MVC application with 
+Get a basic MVC application with Authentication
 
 ### Objective(s)
-- Postgres for backend
 - Identity basic setup
 
 
@@ -62,18 +61,81 @@ dotnet restore
 dotnet aspnet-codegenerator identity -dc <app-name>.Data.ApplicationDbContext --files "Account.Register;Account.Login;Account.Logout;Account.RegisterConfirmation;Account.Manage.PersonalData" --force
 ```
 
+- Create Initial Migration
 
-### The complete set of steps.
+```
+dotnet ef migrations add CreateInitialSchema
+```
+
+- Commit Migration(s)
+```
+dotnet ef database update
+```
+
+
+- Recap of all commands
 
 ```
 dotnet tool install --global dotnet-ef
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
 dotnet new tool-manifest
+dotnet tool install dotnet-ef
 dotnet tool install dotnet-aspnet-codegenerator
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 6.0.1
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 1.1.0
 dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
 dotnet restore
 dotnet aspnet-codegenerator identity -dc <app-name>.Data.ApplicationDbContext --files "Account.Register;Account.Login;Account.Logout;Account.RegisterConfirmation;Account.Manage.PersonalData" --force
+dotnet ef migrations add CreateIdentitySchema
+dotnet ef database update
 ```
+
+
+#### For Postgres database only.
+
+- Replace the below in Program.cs
+```
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+```
+with
+```
+services.AddDbContext<ApplicationDbContext>(options =>
+options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+```
+
+- Append the below in Program.cs:
+```
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+```
+to look like this:
+```
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+```
+
+- Navigate to AppSettings.json and switch the connection string 
+
+from this:
+```
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(<hostname>)\\<db-name>;Database=<app-name-db>;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+```
+to this:
+```
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=<hostname>;Port=5432;Database=<db-name>;User Id=<db-username>;Password=<db-password>;"
+  }
+
+```
+
+
+
+
+
+
