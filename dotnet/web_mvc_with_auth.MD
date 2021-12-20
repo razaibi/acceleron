@@ -72,7 +72,7 @@ cd <app-name>
 dotnet new tool-manifest
 dotnet tool install dotnet-aspnet-codegenerator
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 6.0.1
-dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 1.6.1
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 1.1.0
 dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
 dotnet restore
 dotnet aspnet-codegenerator identity -dc <app-name>.Data.ApplicationDbContext --files "Account.Register;Account.Login;Account.Logout;Account.RegisterConfirmation;Account.Manage.PersonalData" --force
