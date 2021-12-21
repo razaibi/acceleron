@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="{{url_for('static', filename='main.min.css')}}" rel="stylesheet">
+  <link href="{{url_for('static', filename='some_other.css')}}" rel="stylesheet">
+  
+</head>
+<body>
+    {% include "navbar.html"%}
+    {% with page_title=page_title %}
+        {% include "component_page_title.html" %}
+    {% endwith %}        
+    
+    {%block content%}
+    {%endblock%}
+
+    {%block scripts%}
+    {%endblock%}
+</body>
+</html>
