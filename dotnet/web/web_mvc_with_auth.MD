@@ -12,17 +12,23 @@ Get a basic MVC application with Authentication
 - WSL 2
 
 ### Steps
-- Install Entity Framework
-
-```
-dotnet tool install --global dotnet-ef
-```
-
 - Create MVC App with Individual Authentication.
 
 ```
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
+```
+
+- Add manifest file:
+
+```
+dotnet new tool-manifest
+```
+
+- Install Entity Framework
+
+```
+dotnet tool install dotnet-ef
 ```
 
 - Review contents
@@ -76,7 +82,6 @@ dotnet ef database update
 - Recap of all commands
 
 ```
-dotnet tool install --global dotnet-ef
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
 dotnet new tool-manifest
