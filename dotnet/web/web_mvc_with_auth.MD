@@ -123,8 +123,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 with
 
 ```csharp
-services.AddDbContext<ApplicationDbContext>(options =>
-options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
 - Append the below in Program.cs:
