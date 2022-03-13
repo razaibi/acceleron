@@ -100,19 +100,42 @@ dotnet ef database update
 #### For Postgres database only.
 
 
-- Start Postgres with Docker
+- Create file **docker-compose.yml**.
 
 ```bash
-docker run -d \
-    --name <container_name> \
-    -p 5432:5432 \
-    --network host \
-    -e POSTGRES_DB=<db_name> \
-    -e POSTGRES_USER=<db_username> \
-    -e POSTGRES_PASSWORD=<db_password> \
-    postgres
+version: "3.3"
+services:
+  db:
+    build:
+      context: ./Docker
+      dockerfile: db.Dockerfile
+    volumes:
+      - ./var/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 ```
 
+- Create file **Docker/init.sql**
+
+```bash
+CREATE USER <app-username>;
+CREATE DATABASE <db-name>;
+GRANT ALL PRIVILEGES ON DATABASE <db-name> TO <app-username>;
+```
+
+- Create file **Docker/db.Dockerfile**
+
+```bash
+FROM postgres:11.5-alpine
+COPY init.sql /docker-entrypoint-initdb.d/
+```
+
+- Compose and start services.
+
+```bash
+docker-compose -f docker-compose.yml up --no-start
+docker-compose -f docker-compose.yml start
+```
 
 - Replace the below in Program.cs
 ```csharp
