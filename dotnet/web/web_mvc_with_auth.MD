@@ -14,20 +14,20 @@ Get a basic MVC application with Authentication
 ### Steps
 - Create MVC App with Individual Authentication.
 
-```
+```bash
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
 ```
 
 - Add manifest file:
 
-```
+```bash
 dotnet new tool-manifest
 ```
 
 - Install Entity Framework
 
-```
+```bash
 dotnet tool install dotnet-ef
 ```
 
@@ -35,53 +35,53 @@ dotnet tool install dotnet-ef
 
 - Add individual authentication to the 
 
-```
+```bash
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
 ```
 
 - Install Code Generator
-```
+```bash
 dotnet tool install dotnet-aspnet-codegenerator
 ```
 
 - Add packages for Postgres
-```
+```bash
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 6.0.1
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL.Design --version 1.1.0
 ```
 
 - Add package for Code Generation
-```
+```bash
 dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
 ```
 
 - Restore packages
-```
+```bash
 dotnet restore
 ```
 
 - Add IAM features to the app.
 
-```
+```bash
 dotnet aspnet-codegenerator identity -dc <app-name>.Data.ApplicationDbContext --files "Account.Register;Account.Login;Account.Logout;Account.RegisterConfirmation;Account.Manage.PersonalData" --force
 ```
 
 - Create Initial Migration
 
-```
+```bash
 dotnet ef migrations add CreateInitialSchema
 ```
 
 - Commit Migration(s)
-```
+```bash
 dotnet ef database update
 ```
 
 
 - Recap of all commands
 
-```
+```bash
 dotnet new mvc --auth Individual -uld -o <app-name>
 cd <app-name>
 dotnet new tool-manifest
@@ -121,18 +121,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 );
 ```
 with
-```
+
+```csharp
 services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 ```
 
 - Append the below in Program.cs:
-```
+```csharp
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 ```
+
 to look like this:
-```
+
+```csharp
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -141,23 +144,15 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 - Navigate to AppSettings.json and switch the connection string 
 
 from this:
-```
+```json
   "ConnectionStrings": {
     "DefaultConnection": "Server=(<hostname>)\\<db-name>;Database=<app-name-db>;Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 ```
 to this:
-```
+```json
   "ConnectionStrings": {
     "DefaultConnection": "Server=<hostname>;Port=5432;Database=<db-name>;User Id=<db-username>;Password=<db-password>;"
   }
 
 ```
-
-
-
-
-
-
-
-
