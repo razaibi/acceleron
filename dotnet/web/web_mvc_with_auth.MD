@@ -99,8 +99,23 @@ dotnet ef database update
 
 #### For Postgres database only.
 
-- Replace the below in Program.cs
+
+- Start Postgres with Docker
+
+```bash
+docker run -d \
+    --name <container_name> \
+    -p 5432:5432 \
+    --network host \
+    -e POSTGRES_DB=<db_name> \
+    -e POSTGRES_USER=<db_username> \
+    -e POSTGRES_PASSWORD=<db_password> \
+    postgres
 ```
+
+
+- Replace the below in Program.cs
+```csharp
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
@@ -138,6 +153,8 @@ to this:
   }
 
 ```
+
+
 
 
 
