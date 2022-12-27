@@ -5,9 +5,10 @@ dotnet new mvc -o SampleApp -au Individual --framework net6.0
 cd SampleApp
 ```
 
-Scaffold Identity
+Add packages
 
 ```bash
+dotnet new tool-manifest
 dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 6.0.0
 dotnet tool install -g dotnet-aspnet-codegenerator --version 6.0.0
 dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0.0
@@ -65,13 +66,61 @@ public class Project
 Generate CRUD Screens
 
 ```bash
-dotnet aspnet-codegenerator controller -name ProjectController -m Project -dc SampleApp.Data.ApplicationDbContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries -sqlite
+dotnet aspnet-codegenerator controller -name ProjectController -m Project -dc SampleApp.Data.GeneralDbContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries -sqlite
 ```
 
 Create initial migration.
 
 ```bash
 dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+Add the following classes (Blog, Post) to the Models folder.
+
+```csharp
+public class Blog
+{
+    public int BlogId { get; set; }
+    public string Url { get; set; }
+
+    public List<Post> Posts { get; set; }
+}
+```
+
+```csharp
+public class BlogPost
+{
+    public int BlogPostId { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+
+    public int BlogId { get; set; }
+    public Blog Blog { get; set; }
+}
+```
+
+Ensure Data/ApplicationDbContext.cs looks like below.
+
+```csharp
+public class GeneralDbContext : DbContext
+{
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<BlogPosts> BlogPosts { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Blog>()
+            .HasMany(b => b.BlogPosts)
+            .WithOne();
+    }
+}
+```
+
+Create second migration.
+
+```bash
+dotnet ef migrations add AddedNewModels
 dotnet ef database update
 ```
 
