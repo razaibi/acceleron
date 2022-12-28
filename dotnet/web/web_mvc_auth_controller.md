@@ -53,6 +53,12 @@ public class Blog
 ```
 
 ```csharp
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SampleApp.Models;
+
 public class BlogPost
 {
     public int Id { get; set; }
@@ -76,6 +82,11 @@ builder.Services.AddDbContext<GeneralDbContext>(options=>
 Ensure Data/ApplicationDbContext.cs looks like below.
 
 ```csharp
+using Microsoft.EntityFrameworkCore;
+using SampleApp.Models;
+
+namespace SampleApp.Data;
+
 public class GeneralDbContext : DbContext
 {
     public DbSet<Blog> Blogs { get; set; }
@@ -125,28 +136,17 @@ public class Project
 }
 ```
 
+Create a second migration.
+
+```bash
+dotnet ef migrations add AddedNewModels --context=GeneralDbContext
+dotnet ef database update --context=GeneralDbContext
+```
+
 Generate CRUD Screens
 
 ```bash
 dotnet aspnet-codegenerator controller -name ProjectController -m Project -dc SampleApp.Data.GeneralDbContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries -sqlite
-```
-
-Create initial migration.
-
-```bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
-
-
-
-
-
-Create second migration.
-
-```bash
-dotnet ef migrations add AddedNewModels
-dotnet ef database update
 ```
 
 Comment below in Progam.cs as shown.
