@@ -31,7 +31,71 @@ dotnet ef migrations add IdentityCreate
 dotnet ef database update
 ```
 
-Add a new Model to the Models folder.
+Add the following classes (Blog, Post) to the Models folder.
+
+```csharp
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SampleApp.Models;
+
+public class Blog
+{
+    public int Id { get; set; }
+    [Display(Name = "Blog Url")]
+    [StringLength(100, MinimumLength = 3)]
+    [Required]
+    public string Name { get; set; } = "";
+
+    public List<BlogPost> BlogPosts { get; set; }
+}
+```
+
+```csharp
+public class BlogPost
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+
+    public int BlogId { get; set; }
+    public Blog Blog { get; set; }
+}
+```
+
+Ensure Program.cs has the following context added right after connection string declaration.
+
+```csharp
+builder.Services.AddDbContext<GeneralDbContext>(options=>
+    options.UseSqlite(connectionString)
+);
+
+```
+
+Ensure Data/ApplicationDbContext.cs looks like below.
+
+```csharp
+public class GeneralDbContext : DbContext
+{
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
+
+    public GeneralDbContext(DbContextOptions<GeneralDbContext> options)
+        : base(options)
+    {
+    }
+
+    /*
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Blog>()
+            .HasMany(b => b.BlogPosts)
+            .WithOne();
+    }
+    */
+}
+```
 
 ```csharp
 using System;
@@ -61,8 +125,6 @@ public class Project
 }
 ```
 
-
-
 Generate CRUD Screens
 
 ```bash
@@ -76,46 +138,9 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
-Add the following classes (Blog, Post) to the Models folder.
 
-```csharp
-public class Blog
-{
-    public int BlogId { get; set; }
-    public string Url { get; set; }
 
-    public List<Post> Posts { get; set; }
-}
-```
 
-```csharp
-public class BlogPost
-{
-    public int BlogPostId { get; set; }
-    public string Title { get; set; }
-    public string Content { get; set; }
-
-    public int BlogId { get; set; }
-    public Blog Blog { get; set; }
-}
-```
-
-Ensure Data/ApplicationDbContext.cs looks like below.
-
-```csharp
-public class GeneralDbContext : DbContext
-{
-    public DbSet<Blog> Blogs { get; set; }
-    public DbSet<BlogPosts> BlogPosts { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Blog>()
-            .HasMany(b => b.BlogPosts)
-            .WithOne();
-    }
-}
-```
 
 Create second migration.
 
